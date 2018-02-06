@@ -56,9 +56,9 @@ def main():
 
         for u in tqdm(xurls):
             # For debugging
-            count = count + 1
-            if count == 25:
-                break
+            # count = count + 1
+            # if count == 25:
+            #     break
 
             # Cast to string, strip newline (it happens)
             str(u)
