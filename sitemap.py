@@ -17,7 +17,7 @@ def parse_url_for_page_type(body):
         for elem in (body.attrs['class']):
             if 'page-' in elem:
                 str(elem)
-                return elem[5:]           
+                return elem[5:]
 
 def main():
     try:
