@@ -10,7 +10,7 @@ Instructions available at https://brew.sh.
 ```brew install python3```
 
 ### 3. Clone repo
-```git@github.com:kyletaylored/drupal-python-sitemap.git```
+```git clone git@github.com:kyletaylored/drupal-python-sitemap.git```
 
 ### 4. Install requirements.txt
 ```
