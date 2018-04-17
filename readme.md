@@ -9,13 +9,16 @@ Instructions available at https://brew.sh.
 ### 2. Install python 3
 ```brew install python3```
 
-### 3. Install requirements.txt
+### 3. Clone repo
+```git@github.com:kyletaylored/drupal-python-sitemap.git```
+
+### 4. Install requirements.txt
 ```
 cd drupal-python-sitemap
 pip3 install -r requirements.txt
 ```
 
-### 4. Run script.
+### 5. Run script.
 ```
 python3 sitemap.py
 ```
