@@ -2,6 +2,7 @@ import sys, os, requests, yaml
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 import xml.etree.ElementTree as ET
+from pprint import pprint
 
 # Parse for node type
 def parse_url_for_node_type(body):
@@ -18,6 +19,15 @@ def parse_url_for_page_type(body):
             if 'page-' in elem:
                 str(elem)
                 return elem[5:]
+
+# Parse for form
+def parse_url_for_form(body):
+    forms = []
+    if body.find_all('form'):
+        for elem in (body.find_all('form')):
+            if elem.has_attr('action'):
+                forms.append(elem.attrs['action'])
+    return forms
 
 def main():
     try:
@@ -51,14 +61,15 @@ def main():
             raise Exception("No URLs to cycle.")
 
         pages = {}
+        forms = {}
         types = {}
         count = 0
 
         for u in tqdm(xurls):
             # For debugging
-            # count = count + 1
-            # if count == 25:
-            #     break
+            count = count + 1
+            if count == 100:
+                break
 
             # Cast to string, strip newline (it happens)
             str(u)
@@ -73,6 +84,7 @@ def main():
             if body:
                 t = parse_url_for_node_type(body)
                 p = parse_url_for_page_type(body)
+                f = parse_url_for_form(soup)
 
                 # Count types
                 if t in types:
@@ -82,6 +94,20 @@ def main():
                 else:
                     tObj = {t: {'count': 1}}
                     types.update(tObj)
+                
+                # Process forms
+                if f:
+                    for fid in f:
+                        fid = fid.strip()
+                        # Store unique forms
+                        if fid in forms:
+                            urls = forms[fid]['urls']
+                            urls.append(u)
+                        else:
+                            urls = [u]
+
+                        fObj = {fid: {'urls': urls}}
+                        forms.update(fObj)
                 
                 # Capture URL
                 if 'urls' in types[t]:
@@ -99,10 +125,19 @@ def main():
         if types:
             with open('sitemap.yml', 'w') as outfile:
                 yaml.dump(types, outfile, default_flow_style=False)
+        
+        # Dump forms
+        if forms:
+            pprint(forms)
+            with open('gdpr.yml', 'w') as outfile:
+                yaml.dump(forms, outfile, default_flow_style=False)
         return 0
 
     except Exception as e:
-        print(e)
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
+        pprint(e)
         return 1
 
 # Run main
